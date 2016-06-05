@@ -24,5 +24,4 @@ new tabris.TextView({
 }).appendTo(page);
 page.open();
 
-var taskId = setInterval(up, 1000);
 
