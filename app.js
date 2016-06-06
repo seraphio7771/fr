@@ -1,27 +1,16 @@
-function up() {
 
-  fetch("http://192.168.1.101/riders/api.php?action=add").then(function(response) {
-    return response.json();
-  }).catch(function(err) {
-    console.log('err: ', err);
-  }).then(function(json) {
-    console.log('update: ', json)
+  var socket = require("./lib/mysocket").create();
+  socket.init({"address": "http://192.168.1.55:8080/", "actions": ["point", "connect", "disconnect"]});
+
+  socket.on('connect', function () {
+    console.log('connected!');
+    socket.emit('subscribe', {message: {assetId: 1}});
   });
 
-}
+  socket.on('disconnect', function () {
+    console.log('disconnect!');
+  });
 
-
-
-
-
-var page = new tabris.Page({
-  topLevel: true,
-  title: "myapp"
-});
-new tabris.TextView({
-  layoutData: {centerX: 0, centerY: 0},
-  text: "My First App"
-}).appendTo(page);
-page.open();
-
-
+  socket.on('point', function (data) {
+    console.log('point!', data);
+  });

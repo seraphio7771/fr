@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <script src="socket.io-1.4.5.js"></script>
+    <script>
+
+      function log(text) {
+        var d = new Date();
+        var h = d.getHours();
+        var m = d.getMinutes();
+        var s = d.getSeconds();
+
+        var l = document.getElementById("log");
+
+        var newlog = document.createElement('div');
+        var str = h + ':' + m + ':' + s + ' - ' + text;
+        console.log(str);
+
+        newlog.innerHTML = str + '<br />';
+
+        while (newlog.firstChild) {
+          l.appendChild(newlog.firstChild);
+        }
+      }
+
+
+      var app = {
+
+        socket: null,
+        cfg: {},
+        events: [],
+
+        emit: function (action, data) {
+          this.socket.emit(action, data);
+        },
+
+
+        getEvents: function () {
+          var events = [];
+
+          if (this.events.length > 0) {
+            events = this.events.slice(0);
+            this.events = [];
+          }
+
+          return events;
+        },
+
+
+        init: function (cfg) {
+          this.cfg = cfg;
+          this.socket = io(cfg.address);
+
+          // this.emit = this.socket.emit;
+
+          this.cfg.actions.forEach((function(action) {
+            this.socket.on(action, function(data) {
+              log(action);
+              this.events.push({"action": action, "data": data});
+            }.bind(this));
+          }).bind(this));
+        }
+
+      };
+
+
+    </script>
+  </head>
+
+  <body>
+    <div id="log"></div>
+  </body>
+</html>
